@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Как можно работать с таблицами в MySQL на Dart</title>
+</head>
+<style>
+    body {
+        font-family: sans-serif;
+        text-align: center;
+    }
+
+    table {
+        width: 93%;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: left;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+    tr:nth-child(odd) {
+        background: #2db7f8;
+    }
+
+    tr:nth-child(even) {
+        background: #41c7ff;
+    }
+
+    tr:first-child {
+        background: #025a9a;
+        font-weight: bold;
+    }
+
+    tr {
+        opacity: 0.77;
+    }
+
+    tr:nth-child(n+2):hover {
+        color: #fff;
+        cursor: pointer;
+        font-weight: bold;
+        background: #4083b3;
+    }
+
+    td {
+        padding: 5px;
+        position: relative;
+        border: 1px solid #333;
+        height: 20px;
+    }
+
+    td:first-child {
+        width: 35px;
+        text-align: center;
+    }
+
+    h1,
+    h1 a:visited {
+        color: #04599c;
+        background: #fff;
+        font-size: 30px;
+        font-family: Roboto, Geneva, Arial, Helvetica, sans-serif;
+    }
+
+    h1 a:hover {
+        color: #2db7f8;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    label {
+        font-size: 16px;
+        text-decoration: underline;
+        margin-left: 5px;
+    }
+
+    div {
+        display: contents;
+        font-size: 21px;
+        font-weight: bold;
+    }
+
+    input[type="submit"] {
+        cursor: pointer;
+    }
+
+    input[type="text"] {
+        font-style: italic;
+    }
+</style>
+
+<body>
+    <h1><a href=".">Как можно работать с таблицами в MySQL на Dart</a></h1>
+    <form id="myForm">
+        <label>Значение</label>
+        <div> 1: </div><input type="text" name="col1" placeholder="Первый ..." />
+        <label>Значение</label>
+        <div> 2: </div><input type="text" name="col2" placeholder="Второй параметр" />
+        <label>Значение</label>
+        <div> 3: </div><input type="text" name="col3" placeholder="Третий пара..." />
+        <input type="submit" value="Добавить" />
+    </form>
+    <br />
+    @tr
+    <p>Версия базы данных:
+        <b>
+            @ver
+        </b>
+    </p>
+    <script>
+        document.getElementById('myForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const params = new URLSearchParams(formData).toString();
+            formData.set('col1', formData.get('col1').trim());
+            formData.set('col2', formData.get('col2').trim());
+            formData.set('col3', formData.get('col3').trim());
+            if (formData.get('col1') === '' || formData.get('col2') === '' || formData.get('col3') === '') {
+                alert('please fill all the fields');
+            } else {
+                fetch(`${form.action}?${params}`, {
+                    method: 'GET'
+                }).then(response => {
+                    if (response.ok) {
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        console.error(response.error);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
