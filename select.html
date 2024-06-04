@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Как можно работать с таблицами в MySQL на Dart</title>
+    <title>MySQL на Dart</title>
 </head>
 <style>
     body {
@@ -84,24 +84,87 @@
         font-weight: bold;
     }
 
+    label {
+        width: max-content;
+    }
+
+    input {
+        width: max-content;
+    }
+
     input[type="submit"] {
         cursor: pointer;
+        padding: 10px;
+        grid-column-start: 1;
+        grid-column-end: 1;
     }
 
     input[type="text"] {
         font-style: italic;
+    }
+
+
+
+    #myForm {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: auto auto auto;
+        /* flex-direction: column; */
+        /* flex-wrap: wrap; */
+    }
+
+    #myForm div {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
     }
 </style>
 
 <body>
     <h1><a href=".">Как можно работать с таблицами в MySQL на Dart</a></h1>
     <form id="myForm">
-        <label>Значение</label>
-        <div> 1: </div><input type="text" name="col1" placeholder="Первый ..." />
-        <label>Значение</label>
-        <div> 2: </div><input type="text" name="col2" placeholder="Второй параметр" />
-        <label>Значение</label>
-        <div> 3: </div><input type="text" name="col3" placeholder="Третий пара..." />
+        <div>
+            <label for="col1">Фамилия</label>
+            <input type="text" id="col1" name="col1" placeholder="Фамилия" required />
+        </div>
+
+        <div>
+            <label for="col2">Имя</label>
+            <input type="text" id="col2" name="col2" placeholder="Имя" required />
+        </div>
+
+        <div>
+            <label for="col3">Отчество</label>
+            <input type="text" id="col3" name="col3" placeholder="Отчество" />
+        </div>
+
+        <div>
+            <label for="passport">Паспорт</label>
+            <input type="text" id="passport" name="passport" placeholder="Паспорт" required />
+        </div>
+
+        <div>
+            <label for="tax_number">ИНН</label>
+            <input type="text" id="tax_number" name="tax_number" placeholder="ИНН" required />
+        </div>
+
+        <div>
+            <label for="social_number">СНИЛС</label>
+            <input type="text" id="social_number" name="social_number" placeholder="СНИЛС" required />
+        </div>
+
+        <div>
+            <label for="driver_license">Водительские права</label>
+            <input type="text" id="driver_license" name="driver_license" placeholder="Водительские права" />
+        </div>
+        <div>
+            <label for="documents">Дополнительные документы</label>
+            <input type="text" id="documents" name="documents" placeholder="Дополнительные документы" />
+        </div>
+        <div>
+            <label for="notes">Примечание</label>
+            <input type="text" id="notes" name="notes" placeholder="Примечание" />
+        </div>
         <input type="submit" value="Добавить" />
     </form>
     <br />
@@ -117,25 +180,22 @@
             const form = event.target;
             const formData = new FormData(form);
             const params = new URLSearchParams(formData).toString();
-            formData.set('col1', formData.get('col1').trim());
-            formData.set('col2', formData.get('col2').trim());
-            formData.set('col3', formData.get('col3').trim());
-            if (formData.get('col1') === '' || formData.get('col2') === '' || formData.get('col3') === '') {
-                alert('please fill all the fields');
-            } else {
-                fetch(`${form.action}?${params}`, {
-                    method: 'GET'
-                }).then(response => {
-                    if (response.ok) {
-                        window.history.replaceState({}, document.title, window.location.pathname);
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
-                    } else {
-                        console.error(response.error);
-                    }
-                });
+            const keys = formData.keys();
+            for (let key of keys) {
+                formData.set(key, formData.get(key).trim());
             }
+            fetch(`${form.action}?${params}`, {
+                method: 'GET'
+            }).then(response => {
+                if (response.ok) {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    console.error(response.error);
+                }
+            });
         });
     </script>
 </body>

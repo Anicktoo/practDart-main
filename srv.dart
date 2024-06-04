@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:mysql_client/mysql_client.dart';
 
 var hostDockerInternalAddress;
+final collation = "utf8mb4_unicode_ci";
+// final codec = const Windows1252Codec(allowInvalid: true);
 
 void main() async {
   var server = await HttpServer.bind(InternetAddress.anyIPv4, 8888);
@@ -59,28 +61,31 @@ Future<void> viewSelect(res) async {
       userName: "root",
       password: "qwerty",
       databaseName: "test",
+      collation: collation,
     );
     await conn.connect();
     res.write('<table>');
-    var heads = await conn.execute("SHOW COLUMNS FROM myarttable");
+    var heads = await conn.execute("SHOW COLUMNS FROM Individuals");
     res.write('<tr>');
     for (var head in heads.rows) {
       res.write('<td>${head.colAt(0)}</td>');
     }
     res.write('</tr>');
 
-    var table = await conn.execute("SELECT * FROM myarttable ORDER BY id DESC");
+    var table = await conn.execute(
+        "SELECT * FROM Individuals ORDER BY last_name, first_name, middle_name");
     final numOfCols = table.numOfColumns;
     for (var row in table.rows) {
       res.write('<tr>');
       for (var i = 0; i < numOfCols; i++) {
-        res.write('<td>${row.colAt(i)}</td>');
+        var val = row.colAt(i);
+        res.write('<td>${val}</td>');
       }
       res.write('</tr>');
     }
     res.write('</table>');
     await conn.close();
-  } on TimeoutException catch (e) {
+  } on Exception catch (e) {
     res.write('WAITING FOR SQL SERVER TO SETUP');
     print('viewSelect: $e');
   }
@@ -89,19 +94,19 @@ Future<void> viewSelect(res) async {
 Future<void> viewVer(res) async {
   try {
     final conn = await MySQLConnection.createConnection(
-      host: hostDockerInternalAddress,
-      port: 3306,
-      userName: "root",
-      password: "qwerty",
-      databaseName: "test",
-    );
+        host: hostDockerInternalAddress,
+        port: 3306,
+        userName: "root",
+        password: "qwerty",
+        databaseName: "test",
+        collation: collation);
     await conn.connect();
     var vers = await conn.execute("SELECT VERSION() AS ver");
     for (var ver in vers.rows) {
       res.write('${ver.colAt(0)}');
     }
     await conn.close();
-  } on TimeoutException catch (e) {
+  } on Exception catch (e) {
     res.write('WAITING FOR SQL SERVER TO SETUP');
     print('viewVer: $e');
   }
@@ -120,20 +125,20 @@ Future<void> rowInsert(mass) async {
       i++;
     });
     sValue =
-        'INSERT INTO myarttable (text, description, keywords) VALUES ($sValue)';
+        'INSERT INTO Individuals (last_name, first_name, middle_name, passport, tax_number, social_number, driver_license, documents, notes) VALUES ($sValue)';
 
     final conn = await MySQLConnection.createConnection(
-      host: hostDockerInternalAddress,
-      port: 3306,
-      userName: "root",
-      password: "qwerty",
-      databaseName: "test",
-    );
+        host: hostDockerInternalAddress,
+        port: 3306,
+        userName: "root",
+        password: "qwerty",
+        databaseName: "test",
+        collation: collation);
     await conn.connect();
     await conn.execute(sValue);
     await conn.close();
     print('Insert into table is good.');
-  } on TimeoutException catch (e) {
+  } on Exception catch (e) {
     print('rowInsert: $e');
   }
 }

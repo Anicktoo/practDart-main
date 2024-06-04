@@ -10,6 +10,8 @@ dependencies:
   dart_frog: ^0.1.0
   mysql1: ^0.20.0
   mysql_client: ^0.0.25
+  convert: ^3.0.0
+  enough_convert: ^1.6.0
 
 dev_dependencies:
   mocktail: ^0.3.0

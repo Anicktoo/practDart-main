@@ -11,6 +11,7 @@ services:
       - "3306:3306"
     volumes:
       - ./import_test.sql:/docker-entrypoint-initdb.d/import_test.sql
+      - ./my.cnf:/etc/mysql/conf.d/my.cnf
     networks:
       - my_network
 
